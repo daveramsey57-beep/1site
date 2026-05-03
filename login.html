@@ -9,7 +9,19 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="firebase-config.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdAjp6AdOQmoyXQ2DOAJW4Zl34WlfQYVw",
+            authDomain: "my-site-42c85.firebaseapp.com",
+            projectId: "my-site-42c85",
+            storageBucket: "my-site-42c85.firebasestorage.app",
+            messagingSenderId: "372283365155",
+            appId: "1:372283365155:web:6475afc921794c52a35e96",
+            measurementId: "G-J7X1Q1E39C"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+    </script>
     <style>
         .login-page {
             min-height: 100vh;
