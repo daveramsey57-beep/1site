@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Sign Up - Qkkie</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;500;600;700;900&family=Roboto+Condensed:wght@600&family=Roboto:wght@500&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdAjp6AdOQmoyXQ2DOAJW4Zl34WlfQYVw",
+            authDomain: "my-site-42c85.firebaseapp.com",
+            projectId: "my-site-42c85",
+            storageBucket: "my-site-42c85.firebasestorage.app",
+            messagingSenderId: "372283365155",
+            appId: "1:372283365155:web:6475afc921794c52a35e96",
+            measurementId: "G-J7X1Q1E39C"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+    <style>
+        .register-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #fff5f0 0%, #ffe8dc 100%);
+            padding: 20px;
+        }
+
+        .register-container {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            padding: 60px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .register-header h1 {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .register-header p {
+            color: var(--text-light);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .terms input {
+            margin-top: 3px;
+        }
+
+        .terms a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 18px;
+            font-size: 16px;
+        }
+
+        .register-footer {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-light);
+        }
+
+        .register-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+        }
+
+        .back-home a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-home">
+        <a href="index.html">← Back to Home</a>
+    </div>
+
+    <div class="register-page">
+        <div class="register-container">
+            <div class="register-header">
+                <h1>qkkie</h1>
+                <p>Create your free account and start connecting!</p>
+            </div>
+
+            <form onsubmit="handleRegister(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" placeholder="John" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" placeholder="Doe" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="john@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Min 8 characters" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" required>
+                        <option value="">Select gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="non-binary">Non-binary</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" required>
+                </div>
+
+                <div class="terms">
+                    <input type="checkbox" id="agree" required>
+                    <label for="agree">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large btn-register">Create Account - It's Free!</button>
+            </form>
+
+            <div class="register-footer">
+                <p>Already have an account? <a href="login.html">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleRegister(e) {
+            e.preventDefault();
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const gender = document.getElementById('gender').value;
+            const dob = document.getElementById('dob').value;
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.textContent = 'Creating Account...';
+            submitBtn.disabled = true;
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+
+                    return db.collection('users').doc(user.uid).set({
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        gender: gender,
+                        dob: dob,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    alert('Registration successful! Welcome to Qkkie!');
+                    window.location.href = 'index.html';
+                })
+                .catch((error) => {
+                    alert('Error: ' + error.message);
+                    submitBtn.textContent = "Create Account - It's Free!";
+                    submitBtn.disabled = false;
+                });
+        }
+    </script>
+</body>
+</html>

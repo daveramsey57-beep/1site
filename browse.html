@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Browse - Qkkie</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;500;600;700;900&family=Roboto+Condensed:wght@600&family=Roboto:wght@500&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdAjp6AdOQmoyXQ2DOAJW4Zl34WlfQYVw",
+            authDomain: "my-site-42c85.firebaseapp.com",
+            projectId: "my-site-42c85",
+            storageBucket: "my-site-42c85.firebasestorage.app",
+            messagingSenderId: "372283365155",
+            appId: "1:372283365155:web:6475afc921794c52a35e96",
+            measurementId: "G-J7X1Q1E39C"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+    <style>
+        .browse-page {
+            min-height: 100vh;
+            background: #f5f5f5;
+        }
+
+        .browse-nav {
+            background: var(--white);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .browse-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .browse-nav .logo {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 32px;
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-actions a {
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .browse-content {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .search-filters {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .search-filters h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .user-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .user-card-header {
+            height: 200px;
+            background: linear-gradient(135deg, #ff4c00, #ff6b35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .user-card-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-card-header .avatar-placeholder {
+            font-size: 64px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .online-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #4caf50;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .user-card-body {
+            padding: 20px;
+        }
+
+        .user-card-body h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .user-card-body .location {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .user-card-body .bio {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .user-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .user-tag {
+            background: #f0f0f0;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .user-card-footer {
+            display: flex;
+            gap: 10px;
+        }
+
+        .user-card-footer .btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-light);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-light);
+            grid-column: 1 / -1;
+        }
+
+        .no-results h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .results-count {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .users-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="browse-nav">
+        <div class="container">
+            <div class="logo">qkkie</div>
+            <div class="nav-actions">
+                <a href="home.html" class="btn btn-outline">Home</a>
+                <a href="messages.html" class="btn btn-outline">Messages</a>
+                <a href="profile.html" class="btn btn-outline">Profile</a>
+                <a href="#" class="btn btn-primary" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="browse-content">
+        <div class="search-filters">
+            <h2>Find People Near You</h2>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="searchGender">Gender</label>
+                    <select id="searchGender">
+                        <option value="">All</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="non-binary">Non-binary</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="searchAgeMin">Age (Min)</label>
+                    <input type="number" id="searchAgeMin" placeholder="18" min="18" max="100">
+                </div>
+                <div class="filter-group">
+                    <label for="searchAgeMax">Age (Max)</label>
+                    <input type="number" id="searchAgeMax" placeholder="100" min="18" max="100">
+                </div>
+                <div class="filter-group">
+                    <label for="searchLocation">Location</label>
+                    <input type="text" id="searchLocation" placeholder="City or State">
+                </div>
+                <div class="filter-group">
+                    <label for="searchLookingFor">Looking For</label>
+                    <select id="searchLookingFor">
+                        <option value="">All</option>
+                        <option value="casual">Casual Hookups</option>
+                        <option value="dating">Dating</option>
+                        <option value="friends-with-benefits">Friends with Benefits</option>
+                        <option value="friendship">Friendship</option>
+                        <option value="long-term">Long Term</option>
+                        <option value="chat">Just Chat</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button class="btn btn-primary" onclick="searchUsers()">Search</button>
+                <button class="btn btn-outline" onclick="resetFilters()">Reset</button>
+            </div>
+        </div>
+
+        <div class="results-count" id="resultsCount">Loading users...</div>
+
+        <div class="users-grid" id="usersGrid">
+            <div class="loading">
+                <p>Searching for people...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let allUsers = [];
+
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = user;
+            loadUsers();
+        });
+
+        function loadUsers() {
+            db.collection('users')
+                .where('profileComplete', '==', true)
+                .limit(50)
+                .get()
+                .then((snapshot) => {
+                    allUsers = [];
+                    snapshot.forEach((doc) => {
+                        if (doc.id !== currentUser.uid) {
+                            allUsers.push({ id: doc.id, ...doc.data() });
+                        }
+                    });
+                    displayUsers(allUsers);
+                })
+                .catch((error) => {
+                    console.error('Error loading users:', error);
+                    document.getElementById('usersGrid').innerHTML = '<div class="no-results"><h3>Error loading users</h3><p>Please refresh the page</p></div>';
+                });
+        }
+
+        function searchUsers() {
+            const gender = document.getElementById('searchGender').value;
+            const ageMin = parseInt(document.getElementById('searchAgeMin').value) || 0;
+            const ageMax = parseInt(document.getElementById('searchAgeMax').value) || 100;
+            const location = document.getElementById('searchLocation').value.toLowerCase();
+            const lookingFor = document.getElementById('searchLookingFor').value;
+
+            let filtered = allUsers.filter(user => {
+                if (gender && user.gender !== gender) return false;
+
+                if (user.dob) {
+                    const age = calculateAge(user.dob);
+                    if (age < ageMin || age > ageMax) return false;
+                }
+
+                if (location && user.location && !user.location.toLowerCase().includes(location)) return false;
+
+                if (lookingFor && user.lookingFor && !user.lookingFor.includes(lookingFor)) return false;
+
+                return true;
+            });
+
+            displayUsers(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('searchGender').value = '';
+            document.getElementById('searchAgeMin').value = '';
+            document.getElementById('searchAgeMax').value = '';
+            document.getElementById('searchLocation').value = '';
+            document.getElementById('searchLookingFor').value = '';
+            displayUsers(allUsers);
+        }
+
+        function displayUsers(users) {
+            const container = document.getElementById('usersGrid');
+            document.getElementById('resultsCount').textContent = `Found ${users.length} user${users.length !== 1 ? 's' : ''}`;
+
+            if (users.length === 0) {
+                container.innerHTML = '<div class="no-results"><h3>No users found</h3><p>Try adjusting your filters</p></div>';
+                return;
+            }
+
+            let html = '';
+            users.forEach(user => {
+                const initial = (user.firstName || '?').charAt(0).toUpperCase();
+                const photo = user.photoURL ? `<img src="${user.photoURL}" alt="${user.firstName}">` : '';
+                const avatarContent = user.photoURL ? photo : `<div class="avatar-placeholder">${initial}</div>`;
+
+                const age = user.dob ? calculateAge(user.dob) : '';
+                const nameWithAge = age ? `${user.firstName || ''} ${user.lastName || ''}, ${age}` : `${user.firstName || ''} ${user.lastName || ''}`;
+
+                const interests = user.interests ? user.interests.slice(0, 3).map(i => `<span class="user-tag">${i}</span>`).join('') : '';
+
+                const lookingFor = user.lookingFor ? user.lookingFor.slice(0, 2).join(', ') : '';
+
+                html += `
+                    <div class="user-card" onclick="viewProfile('${user.id}')">
+                        <div class="user-card-header">
+                            ${avatarContent}
+                            ${user.isOnline ? '<div class="online-badge">Online</div>' : ''}
+                        </div>
+                        <div class="user-card-body">
+                            <h3>${nameWithAge}</h3>
+                            <div class="location">${user.location || 'Location not set'}</div>
+                            <div class="bio">${user.bio || 'No bio yet...'}</div>
+                            ${interests ? `<div class="user-tags">${interests}</div>` : ''}
+                            ${lookingFor ? `<div class="user-tags"><span class="user-tag">Looking for: ${lookingFor}</span></div>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function viewProfile(userId) {
+            window.location.href = `user-profile.html?id=${userId}`;
+        }
+
+        function calculateAge(dob) {
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        }
+    </script>
+</body>
+</html>

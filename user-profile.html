@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>User Profile - Qkkie</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;500;600;700;900&family=Roboto+Condensed:wght@600&family=Roboto:wght@500&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdAjp6AdOQmoyXQ2DOAJW4Zl34WlfQYVw",
+            authDomain: "my-site-42c85.firebaseapp.com",
+            projectId: "my-site-42c85",
+            storageBucket: "my-site-42c85.firebasestorage.app",
+            messagingSenderId: "372283365155",
+            appId: "1:372283365155:web:6475afc921794c52a35e96",
+            measurementId: "G-J7X1Q1E39C"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+    <style>
+        .profile-view-page {
+            min-height: 100vh;
+            background: #f5f5f5;
+        }
+
+        .profile-view-nav {
+            background: var(--white);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .profile-view-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-view-nav .logo {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 32px;
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-actions a {
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .profile-view-content {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .profile-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .profile-cover {
+            height: 300px;
+            background: linear-gradient(135deg, var(--primary) 0%, #ff6b35 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .profile-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-cover .avatar-placeholder {
+            font-size: 120px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .profile-avatar {
+            position: absolute;
+            bottom: -60px;
+            left: 50px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff4c00, #ff6b35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            border: 5px solid var(--white);
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-body {
+            padding: 80px 50px 50px;
+        }
+
+        .profile-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .profile-location {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        .profile-section {
+            margin-bottom: 30px;
+        }
+
+        .profile-section h3 {
+            font-size: 20px;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .profile-bio {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-light);
+        }
+
+        .profile-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag {
+            background: #f0f0f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .profile-actions .btn {
+            padding: 12px 30px;
+            font-size: 16px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 100px;
+            color: var(--text-light);
+        }
+
+        .error {
+            text-align: center;
+            padding: 100px;
+            color: var(--text-light);
+        }
+
+        .error h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .profile-body {
+                padding: 80px 20px 30px;
+            }
+
+            .profile-avatar {
+                left: 20px;
+                width: 100px;
+                height: 100px;
+                font-size: 36px;
+            }
+
+            .profile-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="profile-view-nav">
+        <div class="container">
+            <div class="logo">qkkie</div>
+            <div class="nav-actions">
+                <a href="home.html" class="btn btn-outline">Home</a>
+                <a href="browse.html" class="btn btn-outline">Browse</a>
+                <a href="messages.html" class="btn btn-outline">Messages</a>
+                <a href="profile.html" class="btn btn-outline">My Profile</a>
+                <a href="#" class="btn btn-primary" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="profile-view-content">
+        <div id="loading" class="loading">
+            <p>Loading profile...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            <h2>User Not Found</h2>
+            <p>The profile you're looking for doesn't exist.</p>
+            <a href="browse.html" class="btn btn-primary" style="margin-top: 20px;">Browse Users</a>
+        </div>
+
+        <div id="profileContent" style="display: none;">
+            <div class="profile-card">
+                <div class="profile-cover" id="profileCover">
+                    <div class="avatar-placeholder" id="coverAvatar"></div>
+                </div>
+
+                <div class="profile-avatar" id="profileAvatar"></div>
+
+                <div class="profile-body">
+                    <div class="profile-name" id="profileName"></div>
+                    <div class="profile-location" id="profileLocation"></div>
+
+                    <div class="profile-section">
+                        <h3>About</h3>
+                        <div class="profile-bio" id="profileBio">No bio yet.</div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h3>Details</h3>
+                        <div class="profile-details" id="profileDetails"></div>
+                    </div>
+
+                    <div class="profile-section" id="interestsSection">
+                        <h3>Interests</h3>
+                        <div class="tags-list" id="profileInterests"></div>
+                    </div>
+
+                    <div class="profile-section" id="lookingForSection">
+                        <h3>Looking For</h3>
+                        <div class="tags-list" id="profileLookingFor"></div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <button class="btn btn-primary" onclick="sendMessage()">Send Message</button>
+                        <button class="btn btn-outline" onclick="blockUser()">Block User</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let viewedUser = null;
+        let viewedUserId = null;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        viewedUserId = urlParams.get('id');
+
+        if (!viewedUserId) {
+            window.location.href = 'browse.html';
+        }
+
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = user;
+            loadUserProfile();
+        });
+
+        function loadUserProfile() {
+            db.collection('users').doc(viewedUserId).get()
+                .then((doc) => {
+                    document.getElementById('loading').style.display = 'none';
+
+                    if (!doc.exists) {
+                        document.getElementById('error').style.display = 'block';
+                        return;
+                    }
+
+                    viewedUser = doc.data();
+                    document.getElementById('profileContent').style.display = 'block';
+
+                    displayProfile();
+                })
+                .catch((error) => {
+                    console.error('Error loading profile:', error);
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('error').style.display = 'block';
+                });
+        }
+
+        function displayProfile() {
+            const firstName = viewedUser.firstName || '';
+            const lastName = viewedUser.lastName || '';
+            const initial = firstName.charAt(0).toUpperCase();
+            const age = viewedUser.dob ? calculateAge(viewedUser.dob) : '';
+
+            document.getElementById('profileName').textContent = age ? `${firstName} ${lastName}, ${age}` : `${firstName} ${lastName}`;
+
+            document.getElementById('profileLocation').textContent = viewedUser.location || 'Location not set';
+
+            document.getElementById('profileBio').textContent = viewedUser.bio || 'No bio yet.';
+
+            if (viewedUser.photoURL) {
+                document.getElementById('profileCover').innerHTML = `<img src="${viewedUser.photoURL}" alt="${firstName}">`;
+                document.getElementById('profileAvatar').innerHTML = `<img src="${viewedUser.photoURL}" alt="${firstName}">`;
+            } else {
+                document.getElementById('coverAvatar').textContent = initial;
+                document.getElementById('profileAvatar').textContent = initial;
+            }
+
+            let detailsHTML = '';
+            if (viewedUser.gender) detailsHTML += `<div class="detail-item"><span class="detail-label">Gender</span><span class="detail-value">${capitalize(viewedUser.gender)}</span></div>`;
+            if (viewedUser.bodyType) detailsHTML += `<div class="detail-item"><span class="detail-label">Body Type</span><span class="detail-value">${capitalize(viewedUser.bodyType)}</span></div>`;
+            if (viewedUser.ethnicity) detailsHTML += `<div class="detail-item"><span class="detail-label">Ethnicity</span><span class="detail-value">${capitalize(viewedUser.ethnicity)}</span></div>`;
+            if (viewedUser.height) detailsHTML += `<div class="detail-item"><span class="detail-label">Height</span><span class="detail-value">${formatHeight(viewedUser.height)}</span></div>`;
+            document.getElementById('profileDetails').innerHTML = detailsHTML;
+
+            if (viewedUser.interests && viewedUser.interests.length > 0) {
+                const interestsHTML = viewedUser.interests.map(i => `<span class="tag">${capitalize(i)}</span>`).join('');
+                document.getElementById('profileInterests').innerHTML = interestsHTML;
+            } else {
+                document.getElementById('interestsSection').style.display = 'none';
+            }
+
+            if (viewedUser.lookingFor && viewedUser.lookingFor.length > 0) {
+                const lookingForHTML = viewedUser.lookingFor.map(l => `<span class="tag">${formatLookingFor(l)}</span>`).join('');
+                document.getElementById('profileLookingFor').innerHTML = lookingForHTML;
+            } else {
+                document.getElementById('lookingForSection').style.display = 'none';
+            }
+
+            if (viewedUserId === currentUser.uid) {
+                document.querySelector('.profile-actions').innerHTML = '<a href="profile.html" class="btn btn-primary">Edit My Profile</a>';
+            }
+        }
+
+        function sendMessage() {
+            window.location.href = `messages.html?userId=${viewedUserId}`;
+        }
+
+        function blockUser() {
+            if (confirm('Are you sure you want to block this user?')) {
+                db.collection('users').doc(currentUser.uid).update({
+                    blockedUsers: firebase.firestore.FieldValue.arrayUnion(viewedUserId)
+                }).then(() => {
+                    alert('User blocked successfully.');
+                    window.location.href = 'browse.html';
+                });
+            }
+        }
+
+        function calculateAge(dob) {
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        function capitalize(str) {
+            return str.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        function formatHeight(height) {
+            const map = {
+                'under-5ft': 'Under 5ft',
+                '5ft-0-5ft-3': "5'0\" - 5'3\"",
+                '5ft-4-5ft-7': "5'4\" - 5'7\"",
+                '5ft-8-5ft-11': "5'8\" - 5'11\"",
+                '6ft-0-6ft-3': "6'0\" - 6'3\"",
+                'over-6ft-3': "Over 6'3\""
+            };
+            return map[height] || height;
+        }
+
+        function formatLookingFor(value) {
+            const map = {
+                'casual': 'Casual Hookups',
+                'dating': 'Dating',
+                'friends-with-benefits': 'Friends with Benefits',
+                'friendship': 'Friendship',
+                'long-term': 'Long Term',
+                'chat': 'Just Chat'
+            };
+            return map[value] || value;
+        }
+
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        }
+    </script>
+</body>
+</html>

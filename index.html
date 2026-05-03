@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Qkkie - Smart Encounters Begin Here</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;500;600;700;900&family=Roboto+Condensed:wght@600&family=Roboto:wght@500&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdAjp6AdOQmoyXQ2DOAJW4Zl34WlfQYVw",
+            authDomain: "my-site-42c85.firebaseapp.com",
+            projectId: "my-site-42c85",
+            storageBucket: "my-site-42c85.firebasestorage.app",
+            messagingSenderId: "372283365155",
+            appId: "1:372283365155:web:6475afc921794c52a35e96",
+            measurementId: "G-J7X1Q1E39C"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <div class="logo">qkkie</div>
+            <div class="nav-links" id="navLinks">
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#testimonials">Reviews</a>
+                <a href="login.html" class="btn btn-outline" id="navLogin">Login</a>
+                <a href="register.html" class="btn btn-primary" id="navSignup">Sign Up</a>
+                <a href="home.html" class="nav-dashboard" id="navHome" style="display:none;">Home</a>
+                <a href="browse.html" class="nav-dashboard" id="navBrowse" style="display:none;">Browse</a>
+                <a href="messages.html" class="nav-dashboard" id="navMessages" style="display:none;">Messages</a>
+                <a href="profile.html" class="nav-dashboard" id="navProfile" style="display:none;">Profile</a>
+                <a href="#" class="btn btn-outline" id="navLogout" style="display:none;" onclick="logout()">Logout</a>
+            </div>
+            <div class="mobile-menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="#testimonials">Reviews</a>
+            <a href="login.html" id="mobileLogin">Login</a>
+            <a href="register.html" class="btn btn-primary" id="mobileSignup">Sign Up</a>
+            <a href="home.html" id="mobileHome" style="display:none;">Home</a>
+            <a href="browse.html" id="mobileBrowse" style="display:none;">Browse</a>
+            <a href="messages.html" id="mobileMessages" style="display:none;">Messages</a>
+            <a href="profile.html" id="mobileProfile" style="display:none;">Profile</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-text">
+                <h1>Where Clever<br>Meets Curious</h1>
+                <p class="hero-subtitle">Looking for a refreshing take on connection? Qkkie is your digital door to thoughtful interactions, playful moments, and unexpected sparks — all in a safe, modern space.</p>
+                <div class="hero-buttons">
+                    <a href="register.html" class="btn btn-primary btn-large">Join Free Today</a>
+                    <a href="#features" class="btn btn-outline btn-large">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-card">
+                    <div class="card-header">
+                        <div class="online-indicator"></div>
+                        <span>Active Now</span>
+                    </div>
+                    <div class="card-profiles">
+                        <div class="profile-avatar" style="background: linear-gradient(135deg, #ff4c00, #ff6b35);">S</div>
+                        <div class="profile-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);">M</div>
+                        <div class="profile-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);">A</div>
+                        <div class="profile-avatar" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">J</div>
+                    </div>
+                    <p class="card-text">2,847 people online now</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose Qkkie?</h2>
+            <p class="section-subtitle">Our platform is designed with your dating success in mind</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure & Private</h3>
+                    <p>Your privacy is our priority. Advanced security measures protect your data.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✅</div>
+                    <h3>Authentic Profiles</h3>
+                    <p>Verification process ensures genuine profiles for real connections.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Smart Matching</h3>
+                    <p>Our algorithm learns your preferences to suggest compatible matches.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Instant Messaging</h3>
+                    <p>Chat in real-time with icebreakers to help start conversations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Advanced Search</h3>
+                    <p>Filter by body type, age, ethnicity, and more to find your match.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Works perfectly on all devices - smartphones, tablets, and desktops.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about">
+        <div class="container about-content">
+            <div class="about-text">
+                <h2>Real Dating, Real People, Real Fun</h2>
+                <p>Qkkie is more than just a dating site – it's a trusted community where authenticity meets excitement. Thousands of users log in daily to chat, meet, and explore real relationships.</p>
+                <ul class="about-list">
+                    <li>✔️ Free registration - no credit card required</li>
+                    <li>✔️ Access to daily bonuses and free coins</li>
+                    <li>✔️ Modern, intuitive interface</li>
+                    <li>✔️ Verified user profiles</li>
+                    <li>✔️ Fast and easy login process</li>
+                </ul>
+                <a href="register.html" class="btn btn-primary btn-large">Get Started Now</a>
+            </div>
+            <div class="about-image">
+                <div class="stats-card">
+                    <div class="stat">
+                        <span class="stat-number">50K+</span>
+                        <span class="stat-label">Active Members</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">1M+</span>
+                        <span class="stat-label">Messages Sent</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">95%</span>
+                        <span class="stat-label">Satisfaction Rate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <h2 class="section-title">What Our Users Say</h2>
+            <p class="section-subtitle">Real stories from people who found meaningful connections</p>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #ff4c00, #ff6b35);">S</div>
+                        <div>
+                            <h4>Sarah Johnson</h4>
+                            <span>Joined 3 months ago</span>
+                        </div>
+                    </div>
+                    <p>"After trying several dating platforms, Qkkie stood out immediately. The quality of people here is amazing. I met my current partner within two weeks!"</p>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);">M</div>
+                        <div>
+                            <h4>Michael Torres</h4>
+                            <span>Joined 5 months ago</span>
+                        </div>
+                    </div>
+                    <p>"As someone skeptical about online dating, Qkkie changed my perspective. The verification process means you're talking to real people."</p>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);">A</div>
+                        <div>
+                            <h4>Amanda Lee</h4>
+                            <span>Joined 1 year ago</span>
+                        </div>
+                    </div>
+                    <p>"Qkkie's approach to dating feels refreshingly modern. The focus on meaningful connections over endless swiping makes all the difference."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container cta-content">
+            <h2>Ready to Find Your Match?</h2>
+            <p>Join thousands of users who've found meaningful connections through Qkkie</p>
+            <a href="register.html" class="btn btn-white btn-large">Sign Up Free - It's Easy!</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-section">
+                <h3>qkkie</h3>
+                <p>Smart encounters begin here. Your digital door to thoughtful interactions and meaningful connections.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#testimonials">Reviews</a>
+                <a href="login.html">Login</a>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <a href="#">Help Center</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact Us</a>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="#" class="social-icon">f</a>
+                    <a href="#" class="social-icon">t</a>
+                    <a href="#" class="social-icon">in</a>
+                    <a href="#" class="social-icon">ig</a>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2026 qkkie.com - All rights reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        }
+
+        auth.onAuthStateChanged((user) => {
+            const navLogin = document.getElementById('navLogin');
+            const navSignup = document.getElementById('navSignup');
+            const navLogout = document.getElementById('navLogout');
+            const navHome = document.getElementById('navHome');
+            const navBrowse = document.getElementById('navBrowse');
+            const navMessages = document.getElementById('navMessages');
+            const navProfile = document.getElementById('navProfile');
+            const mobileLogin = document.getElementById('mobileLogin');
+            const mobileSignup = document.getElementById('mobileSignup');
+            const mobileHome = document.getElementById('mobileHome');
+            const mobileBrowse = document.getElementById('mobileBrowse');
+            const mobileMessages = document.getElementById('mobileMessages');
+            const mobileProfile = document.getElementById('mobileProfile');
+
+            if (user) {
+                // Hide login/signup, show dashboard links
+                if (navLogin) navLogin.style.display = 'none';
+                if (navSignup) navSignup.style.display = 'none';
+                if (navLogout) navLogout.style.display = 'inline-block';
+                if (navHome) navHome.style.display = 'inline-block';
+                if (navBrowse) navBrowse.style.display = 'inline-block';
+                if (navMessages) navMessages.style.display = 'inline-block';
+                if (navProfile) navProfile.style.display = 'inline-block';
+
+                // Mobile menu
+                if (mobileLogin) mobileLogin.style.display = 'none';
+                if (mobileSignup) mobileSignup.style.display = 'none';
+                if (mobileHome) mobileHome.style.display = 'block';
+                if (mobileBrowse) mobileBrowse.style.display = 'block';
+                if (mobileMessages) mobileMessages.style.display = 'block';
+                if (mobileProfile) mobileProfile.style.display = 'block';
+            } else {
+                // Show login/signup, hide dashboard links
+                if (navLogin) navLogin.style.display = 'inline-block';
+                if (navSignup) navSignup.style.display = 'inline-block';
+                if (navLogout) navLogout.style.display = 'none';
+                if (navHome) navHome.style.display = 'none';
+                if (navBrowse) navBrowse.style.display = 'none';
+                if (navMessages) navMessages.style.display = 'none';
+                if (navProfile) navProfile.style.display = 'none';
+
+                // Mobile menu
+                if (mobileLogin) mobileLogin.style.display = 'block';
+                if (mobileSignup) mobileSignup.style.display = 'block';
+                if (mobileHome) mobileHome.style.display = 'none';
+                if (mobileBrowse) mobileBrowse.style.display = 'none';
+                if (mobileMessages) mobileMessages.style.display = 'none';
+                if (mobileProfile) mobileProfile.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
